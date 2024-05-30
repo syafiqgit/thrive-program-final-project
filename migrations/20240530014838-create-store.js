@@ -3,18 +3,19 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Stores', {
-      id: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4
-      },
-      owner_id: {
+      store_id: {
         type: Sequelize.UUID,
         allowNull: false,
         primaryKey: true,
+        defaultValue: Sequelize.UUIDV4
+      },
+      user_id: {
+        type: Sequelize.UUID,
+        field: 'user_id',
+        allowNull: false,
         validate: {
-          notNull: { msg: "Owner id can't be null" },
-          notEmpty: { msg: "Owner id can't be empty" },
+          notNull: { msg: "User id can't be null" },
+          notEmpty: { msg: "User id can't be empty" },
         }
       },
       store_name: {

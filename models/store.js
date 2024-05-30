@@ -10,21 +10,25 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Store.belongsTo(models.User, { foreignKey: 'owner_id' })
+      Store.belongsTo(models.User, { foreignKey: 'user_id' })
+      Store.hasMany(models.Product, { foreignKey: 'store_id' })
     }
   }
   Store.init({
-    id: {
+    store_id: {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4
     },
-    owner_id: {
+    user_id: {
       type: DataTypes.UUID,
+      field: 'user_id',
       allowNull: false,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      validate: {
+        notNull: { msg: "User id can't be null" },
+        notEmpty: { msg: "User id can't be empty" },
+      }
     },
     store_name: {
       type: DataTypes.UUID,
@@ -56,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Store.beforeCreate(async (store) => {
-    const checkStore = await Store.findOne({ where: { owner_id: store.owner_id } })
+    const checkStore = await Store.findOne({ where: { user_id: store.user_id } })
     if (checkStore) throw new Error('Store already exists')
   })
   return Store;

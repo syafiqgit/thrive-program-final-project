@@ -32,7 +32,17 @@ const login = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    try {
+        res.clearCookie("token")
+        statusMessage(res, 200, "Logout success")
+    } catch (error) {
+        statusMessage(res, 404, error.message)
+    }
+}
+
 module.exports = {
     register,
-    login
+    login,
+    logout
 }

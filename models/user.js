@@ -50,10 +50,6 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: "Email can't be null" },
         notEmpty: { msg: "Email can't be empty" },
         isEmail: { msg: "Email must be valid" },
-        checkEmail: async (value) => {
-          const isEmailExist = await User.findOne({ where: { email: value } })
-          if (isEmailExist) throw new Error("Email already exist")
-        }
       }
     },
     password: {
@@ -75,15 +71,24 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: "Phone number can't be null" },
         notEmpty: { msg: "Phone number can't be empty" },
       }
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: { msg: "Address can't be null" },
+        notEmpty: { msg: "Address can't be empty" },
+      }
     }
   }, {
     sequelize,
     modelName: 'User',
   });
   User.beforeCreate(async (user) => {
+    const checkEmail = await User.findOne({ where: { email: user.email } })
+    if (checkEmail) throw new Error("Email already exist")
     const hashedPassword = await bcrypt.hash(user.password, 10)
     user.password = hashedPassword
   })
-
   return User;
 };

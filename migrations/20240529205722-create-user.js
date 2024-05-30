@@ -39,10 +39,6 @@ module.exports = {
           notNull: { msg: "Email can't be null" },
           notEmpty: { msg: "Email can't be empty" },
           isEmail: { msg: "Email must be valid" },
-          checkEmail: (value) => {
-            const isEmailExist = User.findOne({ where: { email: value } })
-            if (isEmailExist) throw new Error("Email already exist")
-          }
         }
       },
       password: {

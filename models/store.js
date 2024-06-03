@@ -1,4 +1,5 @@
 'use strict';
+
 const {
   Model
 } = require('sequelize');
@@ -10,58 +11,66 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Store.belongsTo(models.User, { foreignKey: 'user_id' })
-      Store.hasMany(models.Product, { foreignKey: 'store_id' })
+      Store.belongsTo(models.User, { foreignKey: "user_id" })
+      Store.hasMany(models.Product, { foreignKey: "store_id", onDelete: "CASCADE", onUpdate: "CASCADE" })
+      Store.hasMany(models.Transaction, { foreignKey: "store_id", onDelete: "CASCADE", onUpdate: "CASCADE" })
     }
   }
   Store.init({
-    store_id: {
-      type: DataTypes.UUID,
+    id: {
       allowNull: false,
       primaryKey: true,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
     user_id: {
       type: DataTypes.UUID,
-      field: 'user_id',
       allowNull: false,
+      unique: true,
       validate: {
-        notNull: { msg: "User id can't be null" },
-        notEmpty: { msg: "User id can't be empty" },
-      }
+        notEmpty: { msg: "User id cannot be empty" },
+        notNull: { msg: "User id cannot be null" }
+      },
     },
-    store_name: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      validate: {
-        notNull: { msg: "Store name can't be null" },
-        notEmpty: { msg: "Store name can't be empty" },
-      }
-    },
-    phone_number: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Phone number can't be null" },
-        notEmpty: { msg: "Phone number can't be empty" },
+        notEmpty: { msg: "Name id cannot be empty" },
+        notNull: { msg: "Name id cannot be null" }
+      }
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "Description id cannot be empty" },
+        notNull: { msg: "Description id cannot be null" }
       }
     },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Address can't be null" },
-        notEmpty: { msg: "Address can't be empty" },
+        notEmpty: { msg: "Address id cannot be empty" },
+        notNull: { msg: "Address id cannot be null" }
       }
     },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "Phone number id cannot be empty" },
+        notNull: { msg: "Phone number id cannot be null" }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Store',
   });
-
-  Store.beforeCreate(async (store) => {
-    const checkStore = await Store.findOne({ where: { user_id: store.user_id } })
-    if (checkStore) throw new Error('Store already exists')
+  Store.beforeCreate(async (store) => { 
+    const storeAlreadyExist = await Store.findOne({ where: { user_id: store.user_id } })
+    if (storeAlreadyExist) throw new Error("Store already exist")
   })
   return Store;
 };

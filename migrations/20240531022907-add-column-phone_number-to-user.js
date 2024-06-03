@@ -3,17 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('Users', 'address', {
+    await queryInterface.addColumn("Users", "phone_number", {
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Address can't be null" },
-        notEmpty: { msg: "Address can't be empty" },
+        notEmpty: { msg: "Phone number cannot be empty" },
+        notNull: { msg: "Phone number cannot be null" }
       }
-    })
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('Users');
   }
 };

@@ -1,19 +1,13 @@
 'use strict';
-
-const bcrypt = require("bcryptjs")
-
 const {
   Model
 } = require('sequelize');
+const { hashingPassword } = require('../utils/password');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      User.hasOne(models.Store, { foreignKey: 'user_id' })
+      User.hasOne(models.Store, { foreignKey: "user_id" })
+      User.hasMany(models.Transaction, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" })
     }
   }
   User.init({
@@ -26,19 +20,19 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'buyer',
+      defaultValue: "buyer",
       validate: {
-        isIn: { args: [['buyer', 'seller']], msg: 'Role must be buyer or seller' },
-        notNull: { msg: "Role can't be null" },
-        notEmpty: { msg: "Role can't be empty" },
+        notEmpty: { msg: "Firstname cannot be empty" },
+        notNull: { msg: "Firstname cannot be null" },
+        isIn: [["buyer", "seller"]]
       }
     },
     firstname: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Firstname can't be null" },
-        notEmpty: { msg: "Firstname can't be empty" },
+        notEmpty: { msg: "Firstname cannot be empty" },
+        notNull: { msg: "Firstname cannot be null" }
       }
     },
     lastname: DataTypes.STRING,
@@ -47,37 +41,33 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
       validate: {
-        notNull: { msg: "Email can't be null" },
-        notEmpty: { msg: "Email can't be empty" },
-        isEmail: { msg: "Email must be valid" },
+        notEmpty: { msg: "Email cannot be empty" },
+        notNull: { msg: "Email cannot be null" },
+        isEmail: { msg: "Email is not valid" }
       }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Password can't be null" },
-        notEmpty: { msg: "Password can't be empty" },
-        checkPassword: (value) => {
-          const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/
-          if (!passwordRegex.test(value)) throw new Error("Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-        }
-      }
-    },
-    phone_number: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: { msg: "Phone number can't be null" },
-        notEmpty: { msg: "Phone number can't be empty" },
+        notEmpty: { msg: "Password cannot be empty" },
+        notNull: { msg: "Password cannot be null" }
       }
     },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Address can't be null" },
-        notEmpty: { msg: "Address can't be empty" },
+        notEmpty: { msg: "Address cannot be empty" },
+        notNull: { msg: "Address cannot be null" }
+      }
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: "Phone number cannot be empty" },
+        notNull: { msg: "Phone number cannot be null" }
       }
     }
   }, {
@@ -86,9 +76,10 @@ module.exports = (sequelize, DataTypes) => {
   });
   User.beforeCreate(async (user) => {
     const checkEmail = await User.findOne({ where: { email: user.email } })
-    if (checkEmail) throw new Error("Email already exist")
-    const hashedPassword = await bcrypt.hash(user.password, 10)
-    user.password = hashedPassword
+    if (checkEmail) throw new Error("Email already exists")
+    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+    if (!regexPassword.test(user.password)) throw new Error("Password must contain at least 6 characters, one uppercase letter, one lowercase letter, one number and one special character")
+    user.password = await hashingPassword(user.password)
   })
   return User;
 };

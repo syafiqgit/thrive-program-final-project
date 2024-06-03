@@ -1,7 +1,4 @@
 'use strict';
-
-const { User } = require("../models")
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -15,50 +12,46 @@ module.exports = {
       role: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'buyer',
+        defaultValue: "buyer",
         validate: {
-          isIn: { args: [['buyer', 'seller']], msg: 'Role must be buyer or seller' },
-          notNull: { msg: "Role can't be null" },
-          notEmpty: { msg: "Role can't be empty" },
+          notEmpty: { msg: "Firstname cannot be empty" },
+          notNull: { msg: "Firstname cannot be null" },
+          isIn: [["buyer", "seller"]]
         }
       },
       firstname: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Firstname can't be null" },
-          notEmpty: { msg: "Firstname can't be empty" },
+          notEmpty: { msg: "Firstname cannot be empty" },
+          notNull: { msg: "Firstname cannot be null" }
         }
       },
       lastname: Sequelize.STRING,
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         validate: {
-          notNull: { msg: "Email can't be null" },
-          notEmpty: { msg: "Email can't be empty" },
-          isEmail: { msg: "Email must be valid" },
+          notEmpty: { msg: "Email cannot be empty" },
+          notNull: { msg: "Email cannot be null" },
+          isEmail: { msg: "Email is not valid" }
+
         }
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Password can't be null" },
-          notEmpty: { msg: "Password can't be empty" },
-          checkPassword: (value) => {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/
-            if (!passwordRegex.test(value)) throw new Error("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-          }
+          notEmpty: { msg: "Password cannot be empty" },
+          notNull: { msg: "Password cannot be null" }
         }
       },
-      phone_number: {
+      address: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Phone number can't be null" },
-          notEmpty: { msg: "Phone number can't be empty" },
+          notEmpty: { msg: "Address cannot be empty" },
+          notNull: { msg: "Address cannot be null" },
         }
       },
       createdAt: {

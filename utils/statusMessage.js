@@ -1,6 +1,6 @@
 const statusMessage = (res, statusCode, message, data) => {
-    res.status(statusCode || 500).json({
-        message: message || "Internal server error",
+    res.status(statusCode).json({
+        message: message,
         data: data || null
     })
 }

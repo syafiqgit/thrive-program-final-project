@@ -3,43 +3,52 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Products', {
-      product_id: {
-        type: Sequelize.UUID,
+      id: {
         allowNull: false,
         primaryKey: true,
+        type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
       },
       store_id: {
-        type: Sequelize.UUID,
-        field: 'store_id',
         allowNull: false,
+        type: Sequelize.UUID,
         validate: {
-          notNull: { msg: "Store can't be null" },
-          notEmpty: { msg: "Store can't be empty" },
-        }
+          notNull: { msg: "Store id cannot be null" },
+          notEmpty: { msg: "Store id cannot be empty" }
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
-      product_name: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Product name can't be null" },
-          notEmpty: { msg: "Product name can't be empty" },
+          notNull: { msg: "Name cannot be null" },
+          notEmpty: { msg: "Name cannot be empty" }
         }
       },
       description: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Description can't be null" },
-          notEmpty: { msg: "Description can't be empty" },
+          notNull: { msg: "Name cannot be null" },
+          notEmpty: { msg: "Name cannot be empty" }
         }
       },
-      quantity: {
+      stok: {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: "Quantity can't be null" },
-          notEmpty: { msg: "Quantity can't be empty" },
+          notNull: { msg: "Stok cannot be null" },
+          notEmpty: { msg: "Stok cannot be empty" }
+        }
+      },
+      price: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+          notNull: { msg: "Price cannot be null" },
+          notEmpty: { msg: "Price cannot be empty" }
         }
       },
       createdAt: {

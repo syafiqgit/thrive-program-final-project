@@ -10,58 +10,58 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Product.belongsTo(models.Store, { foreignKey: 'store_id' })
-      Product.hasMany(models.OrderItem, { foreignKey: 'product_id' })
+      Product.belongsTo(models.Store, { foreignKey: "store_id", onDelete: "CASCADE", onUpdate: "CASCADE" })
     }
   }
   Product.init({
-    product_id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
+    id: {
       allowNull: false,
+      primaryKey: true,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
     store_id: {
-      type: DataTypes.UUID,
-      field: 'store_id',
       allowNull: false,
+      type: DataTypes.UUID,
       validate: {
-        notNull: { msg: "Store id can't be null" },
-        notEmpty: { msg: "Store id can't be empty" },
-      }
+        notNull: { msg: "Store id cannot be null" },
+        notEmpty: { msg: "Store id cannot be empty" }
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE"
     },
-    product_name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Product name can't be null" },
-        notEmpty: { msg: "Product name can't be empty" },
+        notNull: { msg: "Name cannot be null" },
+        notEmpty: { msg: "Name cannot be empty" }
       }
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: "Description can't be null" },
-        notEmpty: { msg: "Description can't be empty" },
+        notNull: { msg: "Name cannot be null" },
+        notEmpty: { msg: "Name cannot be empty" }
       }
     },
-    quantity: {
+    stok: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        notNull: { msg: "Quantity can't be null" },
-        notEmpty: { msg: "Quantity can't be empty" },
+        notNull: { msg: "Stok cannot be null" },
+        notEmpty: { msg: "Stok cannot be empty" }
       }
     },
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
-        notNull: { msg: "Price can't be null" },
-        notEmpty: { msg: "Price can't be empty" },
+        notNull: { msg: "Price cannot be null" },
+        notEmpty: { msg: "Price cannot be empty" }
       }
-    }
+    },
   }, {
     sequelize,
     modelName: 'Product',

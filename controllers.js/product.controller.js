@@ -1,9 +1,11 @@
 const { Store, Product } = require("../models")
 const statusMessage = require("../utils/statusMessage")
+const { sequelize } = require("../models")
+const { QueryTypes } = require("sequelize")
 
 const getProducts = async (req, res) => {
     try {
-        const product = await Product.findAll()
+        const product = await sequelize.query('SELECT * FROM `products`')
         if (!product) statusMessage(res, 404, "Product not found")
         statusMessage(res, 200, "Get product success", product)
     } catch (error) {
